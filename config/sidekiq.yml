@@ -1,6 +1,5 @@
 :verbose: true
 :pidfile: ./sidekiq.pid
-:logfile: ./sidekiq.log
 :concurrency: 1
 :queues:
     - default
