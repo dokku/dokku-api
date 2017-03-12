@@ -9,9 +9,9 @@ require 'securerandom'
 require 'json'
 
 Sidekiq.configure_client do |config|
-  config.redis = { url: "redis://localhost:6379" }
+  config.redis = { url: ENV["REDIS_URL"] }
 end
-$redis = Redis.new( url: "redis://localhost:6379" )
+$redis = Redis.new( url:ENV["REDIS_URL"] )
 
 
 set :logger, Logger.new(STDOUT)
