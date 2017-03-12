@@ -9,6 +9,8 @@ end
 class CommandRunner
   include Sidekiq::Worker
   def perform(command_id, command)
+    logger.info "Things are happening."
+
     $redis = Redis.new( ENV["REDIS_URL"] )
 
     begin
