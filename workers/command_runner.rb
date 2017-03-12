@@ -1,0 +1,23 @@
+require 'sidekiq'
+require 'socket'
+DEFAULT_SOCKET_PATH="/var/run/dokku-daemon/dokku-daemon.sock"
+
+Sidekiq.configure_server do |config|
+  config.redis = { url: "redis://localhost:6379" }
+end
+
+class CommandRunner
+  include Sidekiq::Worker
+  def perform(command_id, command)
+    $redis = Redis.new( url: "redis://localhost:6379" )
+
+    begin
+      socket = UNIXSocket.new(DEFAULT_SOCKET_PATH)
+      socket.puts(command)
+      result = socket.gets("\n")
+      $redis.set("dda:#{command_id}", result)
+    rescue Exception => e
+      $redis.set("dda:#{command_id}", {status: "error", message: e.message}.to_json)
+    end
+  end
+end

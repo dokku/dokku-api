@@ -1,3 +1,6 @@
 source 'https://rubygems.org'
 gem 'sinatra'
 gem 'awesome_print'
+gem 'sidekiq'
+gem 'json'
+gem 'byebug'
