@@ -11,11 +11,9 @@ require 'json'
 Sidekiq.configure_client do |config|
   config.redis = { url: ENV["REDIS_URL"] }
 end
-$redis = Redis.new( url:ENV["REDIS_URL"] )
-
+$redis = Redis.new( url: ENV["REDIS_URL"] )
 
 set :logger, Logger.new(STDOUT)
-
 
 get '/run' do
   content_type :json
@@ -33,6 +31,7 @@ get '/status' do
     result_json = JSON.parse(result)
     {status: "ok", result: result_json}.to_json
   rescue Exception => e
+    logger.info e
     {status: "error", message: e.message}.to_json
   end
 end
