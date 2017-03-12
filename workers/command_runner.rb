@@ -10,8 +10,9 @@ class CommandRunner
   include Sidekiq::Worker
   def perform(command_id, command)
     logger.info "Things are happening."
+    logger.info  ENV["REDIS_URL"]
 
-    $redis = Redis.new( ENV["REDIS_URL"] )
+    $redis = Redis.new( url: ENV["REDIS_URL"] )
 
     begin
       socket = UNIXSocket.new(DEFAULT_SOCKET_PATH)
