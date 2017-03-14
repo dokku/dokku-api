@@ -28,6 +28,7 @@ get '/status' do
   result = $redis.get("dda:#{params[:command_id]}")
 
   begin
+    logger.info result
     result_json = JSON.parse(result)
     {status: "ok", result: result_json}.to_json
   rescue Exception => e
