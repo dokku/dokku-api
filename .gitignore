@@ -1,2 +1,4 @@
 sidekiq.log
 sidekiq.pid
+.ruby-gemset
+.ruby-version
