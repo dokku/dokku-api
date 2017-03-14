@@ -2,7 +2,7 @@ require 'sidekiq'
 require 'socket'
 require 'timeout'
 DEFAULT_SOCKET_PATH="/var/run/dokku-daemon/dokku-daemon.sock"
-DEFAULT_TIMEOUT=10
+DEFAULT_TIMEOUT=60
 Sidekiq.configure_server do |config|
   config.redis = { url: ENV["REDIS_URL"] }
 end
