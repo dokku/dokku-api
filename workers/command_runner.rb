@@ -23,6 +23,7 @@ class CommandRunner
         result = socket.gets("\n")
         logger.info "[CommandRunner] Result: #{result}"
         $redis.set("dda:#{command_id}", result)
+        socket.close
       end
     rescue Timeout::Error
       logger.info "[CommandRunner] Command Timed Out"
