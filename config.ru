@@ -1,6 +1,6 @@
 require './app'
 require 'sidekiq/web'
-run Sinatra::Application
+run DokkuDaemonAPI::App
 
 map "/sidekiq" do
   run Sidekiq::Web

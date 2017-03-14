@@ -1,4 +1,4 @@
-require 'sinatra'
+require 'sinatra/base'
 require 'ap'
 require "open-uri"
 require 'logger'
@@ -7,35 +7,39 @@ require 'sidekiq'
 require './workers/command_runner'
 require 'securerandom'
 require 'json'
+require 'byebug'
+Dir["./helpers/*.rb"].each {|file| require file }
 
-Sidekiq.configure_client do |config|
-  config.redis = { url: ENV["REDIS_URL"] }
-end
-$redis = Redis.new( url: ENV["REDIS_URL"] )
+module DokkuDaemonAPI
+  class App < Sinatra::Base
+    set :logger, Logger.new(STDOUT)
+    include Helpers::ApplicationHelper
 
-set :logger, Logger.new(STDOUT)
-
-get '/run' do
-  content_type :json
-  command_id = SecureRandom.hex(32)
-  CommandRunner.perform_async(command_id, params[:cmd])
-  {success: true, command_id: command_id}.to_json
-end
-
-get '/status' do
-  content_type :json
-
-  result = $redis.get("dda:#{params[:command_id]}")
-
-  begin
-    if result
-      result_json = JSON.parse(result)
-      {status: "ok", result: result_json}.to_json
-    else
-      {status: "error", result: "result_not_ready"}.to_json
+    before do
+      content_type :json
+      authenticate!
     end
-  rescue Exception => e
-    logger.info e
-    {status: "error", message: e.message}.to_json
+
+    get '/run' do
+      command_id = generate_command_id
+      CommandRunner.perform_async(command_id, params[:cmd])
+      {success: true, command_id: command_id}.to_json
+    end
+
+    get '/status' do
+      result = redis.get("dda:#{params[:command_id]}")
+
+      begin
+        if result
+          result_json = JSON.parse(result)
+          {status: "success", result: result_json}.to_json
+        else
+          {status: "error", result: "not_ready"}.to_json
+        end
+      rescue Exception => e
+        logger.info e
+        {status: "error", message: e.message}.to_json
+      end
+    end
   end
 end
