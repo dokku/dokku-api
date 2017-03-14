@@ -17,6 +17,7 @@ class CommandRunner
     begin
       Timeout.timeout(DEFAULT_TIMEOUT) do
         socket = UNIXSocket.new(DEFAULT_SOCKET_PATH)
+        sleep(1) # Give socket 1 sec
         logger.info "[CommandRunner] Sending the command"
         socket.puts(command)
         logger.info "[CommandRunner] Waiting for the result"
