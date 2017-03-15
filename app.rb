@@ -20,10 +20,10 @@ module DokkuDaemonAPI
       authenticate!
     end
 
-    get '/run' do
+    post '/run' do
       command_id = generate_command_id
       CommandRunner.perform_async(command_id, params[:cmd])
-      {success: true, command_id: command_id}.to_json
+      {status: "success", command_id: command_id}.to_json
     end
 
     get '/status' do
