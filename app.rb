@@ -24,6 +24,7 @@ module DokkuDaemonAPI
         CommandRunner.perform_async(command.id)
         command.to_json(exclude: :result, methods: [:result_data])
       else
+        status 422
         {status: :error, messages: command.errors.collect{|field,msg| "#{field} #{msg}"}}.to_json
       end
     end
@@ -34,6 +35,7 @@ module DokkuDaemonAPI
       if command
         command.to_json(exclude: :result, methods: [:result_data])
       else
+        status 404
         {status: :error, message: :not_found}.to_json
       end
     end
@@ -46,6 +48,7 @@ module DokkuDaemonAPI
         command.update!(result: nil)
         command.to_json(exclude: :result, methods: [:result_data])
       else
+        status 404
         {status: :error, message: :not_found}.to_json
       end
     end
