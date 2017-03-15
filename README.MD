@@ -33,12 +33,11 @@ Dokku API uses `Api-Key` and `Api-Secret` request headers for authentication. Th
 
 ## Usage
 
-Dokku API has to endpoints
+Dokku API has two endpoints. `POST /run` and `GET /status`
 
-**Endpoint**
+## POST /run
 
 Runs the given command and returns the `command_id`. `command_id` is used for getting the result of command.
-`POST /run`
 
 **Params**
 
@@ -52,7 +51,9 @@ Runs the given command and returns the `command_id`. `command_id` is used for ge
       "command_id": "fe40c1efc41c6b9f8a185be9ee52fffdf92af5bed2c07971fa38cf237be84f4e"
     }
 ```
-**Endpoint**
+
+
+## GET /status
 
 Returns the result of a command. 
 `GET /status`
