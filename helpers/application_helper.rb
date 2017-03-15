@@ -13,9 +13,9 @@ module DokkuDaemonAPI
       end
 
       def authenticate!
-        # unless ENV["API_KEY"] == request.env['HTTP_X_API_KEY']
-        #   halt 401, nil, {status: "error", message: :not_authenticated}.to_json
-        # end
+        unless ENV["API_KEY"] == request.env["HTTP_API_KEY"] && ENV["API_SECRET"] == request.env["HTTP_API_SECRET"]
+          halt 401, nil, {status: "error", message: :not_authenticated}.to_json
+        end
       end
     end
   end
