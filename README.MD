@@ -45,12 +45,13 @@ Runs the given command and returns the `command_id`. `command_id` is used for ge
     cmd -> Command to run
     
 **Response** 
-    
+
+```json
     {
       "success": true,
       "command_id": "fe40c1efc41c6b9f8a185be9ee52fffdf92af5bed2c07971fa38cf237be84f4e"
     }
-    
+```
 **Endpoint**
 
 Returns the result of a command. 
@@ -64,6 +65,7 @@ Returns the result of a command.
     
 *apps*
 
+```json
     {
       "status": "success",
       "result": {
@@ -71,9 +73,11 @@ Returns the result of a command.
         "output": "=====> My Apps\napi\nhello_world"
       }
     }
-    
+```
+
 *randomcmd*
 
+```json
     {
       "status": "ok",
       "result": {
@@ -81,10 +85,12 @@ Returns the result of a command.
         "output": "Invalid command"
       }
     }
-    
+```    
 *ps:restart hello_world*
 
+```json
     {
       "status": "error",
       "result": "result_not_ready"
     }
+```
