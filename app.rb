@@ -1,14 +1,7 @@
-require 'sinatra/base'
-require 'ap'
-require "open-uri"
-require 'logger'
-require 'socket'
-require 'sidekiq'
-require './workers/command_runner'
-require 'securerandom'
-require 'json'
-require 'byebug'
-Dir["./helpers/*.rb"].each {|file| require file }
+require "rubygems"
+require "bundler/setup"
+require "sinatra"
+require File.join(File.dirname(__FILE__), "config", "environment")
 
 module DokkuDaemonAPI
   class App < Sinatra::Base
@@ -20,25 +13,29 @@ module DokkuDaemonAPI
       authenticate!
     end
 
-    post '/run' do
-      command_id = generate_command_id
-      CommandRunner.perform_async(command_id, params[:cmd])
-      {status: "success", command_id: command_id}.to_json
+    get '/commands' do
+      Command.all.to_json
     end
 
-    get '/status' do
-      result = redis.get("dda:#{params[:command_id]}")
+    post '/commands' do
+      command = Command.create(command: params[:cmd])
 
-      begin
-        if result
-          result_json = JSON.parse(result)
-          {status: "success", result: result_json}.to_json
-        else
-          {status: "error", result: "not_ready"}.to_json
-        end
-      rescue Exception => e
-        logger.info e
-        {status: "error", message: e.message}.to_json
+      if command.valid?
+        #CommandRunner.perform_async(command.id)
+        command.to_json
+      else
+        {status: :error, messages: command.errors.collect{|field,msg| "#{field} #{msg}"}}.to_json
+      end
+    end
+
+    get '/commands/:id' do
+      command = Command.first(command_hash: params[:id])
+      logger.info(params)
+
+      if command
+        command.to_json
+      else
+        {status: :error, message: :not_found}.to_json
       end
     end
   end

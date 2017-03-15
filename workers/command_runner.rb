@@ -1,6 +1,5 @@
 require 'sidekiq'
-require 'socket'
-require 'timeout'
+require File.join(File.dirname(__FILE__), "..", "config", "environment")
 DEFAULT_SOCKET_PATH="/var/run/dokku-daemon/dokku-daemon.sock"
 DEFAULT_TIMEOUT=60
 Sidekiq.configure_server do |config|
@@ -9,10 +8,8 @@ end
 
 class CommandRunner
   include Sidekiq::Worker
-  def perform(command_id, command)
+  def perform(command_id)
     logger.info "[CommandRunner] #{command_id} | #{command}"
-
-    $redis = Redis.new( url: ENV["REDIS_URL"] )
 
     begin
       Timeout.timeout(DEFAULT_TIMEOUT) do
