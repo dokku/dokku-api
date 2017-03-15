@@ -14,7 +14,7 @@ module DokkuDaemonAPI
     end
 
     get '/commands' do
-      Command.all.to_json
+      Command.all.to_json(exclude: :result, methods: [:result_data])
     end
 
     post '/commands' do
@@ -22,7 +22,7 @@ module DokkuDaemonAPI
 
       if command.valid?
         CommandRunner.perform_async(command.id)
-        command.to_json
+        command.to_json(exclude: :result, methods: [:result_data])
       else
         {status: :error, messages: command.errors.collect{|field,msg| "#{field} #{msg}"}}.to_json
       end
@@ -32,7 +32,19 @@ module DokkuDaemonAPI
       command = Command.first(token: params[:token])
 
       if command
-        command.to_json
+        command.to_json(exclude: :result, methods: [:result_data])
+      else
+        {status: :error, message: :not_found}.to_json
+      end
+    end
+
+    get '/commands/:token/retry' do
+      command = Command.first(token: params[:token])
+
+      if command
+        CommandRunner.perform_async(command.id)
+        command.update!(result: nil)
+        command.to_json(exclude: :result, methods: [:result_data])
       else
         {status: :error, message: :not_found}.to_json
       end

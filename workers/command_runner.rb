@@ -21,20 +21,19 @@ class CommandRunner
         logger.info "[CommandRunner] Waiting for the result"
         result = socket.gets("\n")
         logger.info "[CommandRunner] Result: #{result}"
-        @command.result = result
-        @command.save!
+        @command.update!(result: result, ran_at: DateTime.now)
         socket.close
       end
     rescue Timeout::Error
       logger.info "[CommandRunner] Command Timed Out"
-      @command.result = {ok: false, output: "command_timed_out"}.to_json.to_s
-      @command.save
+      result = {ok: false, output: "command_timed_out"}.to_json.to_s
+      @command.update!(result: result, ran_at: DateTime.now)
       socket.close if defined? socket
     rescue Exception => e
       logger.info "[CommandRunner] Exception"
       logger.info e
-      @command.result = {ok: false, output: e.message}.to_json.to_s
-      @command.save
+      result = {ok: false, output: e.message}.to_json.to_s
+      @command.update!(result: result, ran_at: DateTime.now)
       socket.close if defined? socket
     end
   end

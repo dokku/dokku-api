@@ -18,4 +18,8 @@ class Command
       break unless Command.first(token: self.token)
     end
   end
+
+  def result_data
+    self.result ? JSON.parse(self.result) : nil
+  end
 end
