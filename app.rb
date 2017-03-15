@@ -21,16 +21,15 @@ module DokkuDaemonAPI
       command = Command.create(command: params[:cmd])
 
       if command.valid?
-        #CommandRunner.perform_async(command.id)
+        CommandRunner.perform_async(command.id)
         command.to_json
       else
         {status: :error, messages: command.errors.collect{|field,msg| "#{field} #{msg}"}}.to_json
       end
     end
 
-    get '/commands/:id' do
-      command = Command.first(command_hash: params[:id])
-      logger.info(params)
+    get '/commands/:token' do
+      command = Command.first(token: params[:token])
 
       if command
         command.to_json
