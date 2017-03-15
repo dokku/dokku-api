@@ -1,4 +1,4 @@
-# Dokku Daemon API
+# Dokku API
 
 HTTP API to interact with  [Dokku Daemon](https://github.com/dokku/dokku-daemon) over HTTP.
 
