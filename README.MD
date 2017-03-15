@@ -49,8 +49,6 @@ You can generate a key pair with `rake keys:generate` command.
 
 ## Usage
 
-Dokku API has two endpoints. `POST /run` and `GET /status`
-
 ### Retrive all commands
 
 `GET /commands`
