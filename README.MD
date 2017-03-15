@@ -4,7 +4,7 @@ HTTP API to interact with  [Dokku Daemon](https://github.com/dokku/dokku-daemon)
 
 ## Requirements 
 
-A server running Dokku with Dokku Daemon and Redis plugin installed.
+A server running Dokku with Dokku Daemon and Redis, Postgres plugin installed.
 
 ## How it works?
 
@@ -16,8 +16,9 @@ You need to create an app for the API on the server;
 
     dokku apps:create dokku-api
     dokku redis:create dokku-api
+    dokku postgres:create dokku-api
     dokku redis:link dokku-api:dokku-api
-    dokku config:set dokku-api API_KEY=YOURAPIKEY API_SECRET=YOURAPISECRET
+    dokku postgres:link dokku-api:dokku-api
     dokku storage:mount dokku-api /var/run/dokku-daemon:/var/run/dokku-daemon
     
 Then you can deploy your app;
@@ -30,69 +31,122 @@ Then you can deploy your app;
 
 ## Authentication
 
-Dokku API uses `Api-Key` and `Api-Secret` request headers for authentication. These values are set as environment variables while deploying your app named `API_KEY` and `API_SECRET`. **`Api-Key` and `Api-Secret` headers must be present on all requests**.
+Dokku API uses `Api-Key` and `Api-Secret` request headers for authentication. **`Api-Key` and `Api-Secret` headers must be present on all requests**.
+
+You can generate a key pair with `rake keys:generate` command.
+
+    dokku run dokku-api keys:generate
+    >   New API key was generated
+    >   API KEY: b33e456232bba2edb8d5cde370bc2f35 | API SECRET: a46287c12099fdd55f0c9513be0cdb32
+    
+
+### Headers
+
+| Name    | Type   | Description                                  |
+| ------- | ------ | -------------------------------------------- |
+| Api-Key    | string | **Required**                              |
+| Api-Secret    | string | **Required**                              |
 
 ## Usage
 
 Dokku API has two endpoints. `POST /run` and `GET /status`
 
-## POST /run
+### Retrive all commands
 
-Runs the given command and returns the `command_id`. `command_id` is used for getting the result of command.
+`GET /commands`
+    
+**Example**
+
+    curl -i -H "Api-Key: YOURKEY" -H "Api-Secret: YOURSECRET" http://yourserver.ip:42143/commands
+
+**Response**
+
+```json
+[
+  {
+    "id": 1,
+    "token": "5069a9ff27219462df6743e6a8b635610cd6c6757ca224605713f89d7e3375be",
+    "command": "randomcmd",
+    "created_at": "2017-03-15T15:13:45+00:00",
+    "ran_at": "2017-03-15T15:13:45+00:00",
+    "result_data": {
+      "ok": false,
+      "output": "Invalid command"
+    }
+  },
+  {
+    "id": 2,
+    "token": "6b0d56b05b5946b5d18c7f8a8891150d52f7e48a354cf8dcd96800b85340dcb3",
+    "command": "apps",
+    "created_at": "2017-03-15T15:14:47+00:00",
+    "ran_at": "2017-03-15T15:14:49+00:00",
+    "result_data": {
+      "ok": true,
+      "output": "=====> My Apps\napi\ndokku-api\nhello_world"
+    }
+  }
+]
+```
+
+## Run a command
+
+`POST /commands`
+
+Adds the given command to the queue and returns the `Command` as json.
 
 **Params**
 
-    cmd -> Command to run
+| Name    | Type   | Description                                  |
+| ------- | ------ | -------------------------------------------- |
+| cmd    | string | **Required**. Command to run.       |
+
+
+**Example**
+
+    curl -i -X POST -d "cmd=apps" -H "Api-Key: YOURKEY" -H "Api-Secret: YOURSECRET" http://yourserver.ip:42143/commands
     
 **Response** 
 
 ```json
-    {
-      "success": true,
-      "command_id": "fe40c1efc41c6b9f8a185be9ee52fffdf92af5bed2c07971fa38cf237be84f4e"
-    }
+  {
+    "id": 2,
+    "token": "6b0d56b05b5946b5d18c7f8a8891150d52f7e48a354cf8dcd96800b85340dcb3",
+    "command": "apps",
+    "created_at": "2017-03-15T15:14:47+00:00",
+    "ran_at": null,
+    "result_data": null
+  }
 ```
 
 
-## GET /status
+## Retrieve a command 
 
-Returns the result of a command. 
-`GET /status`
+`GET /command/:token`
+
+Returns the `Command`. 
+
+**Example**
+
+    curl -i -H "Api-Key: YOURKEY" -H "Api-Secret: YOURSECRET" http://yourserver.ip:42143/commands/6b0d56b05b5946b5d18c7f8a8891150d52f7e48a354cf8dcd96800b85340dcb3
 
 **Params**
 
-    command_id -> Command ID of the command
-    
+| Name    | Type   | Description                                  |
+| ------- | ------ | -------------------------------------------- |
+| token    | string | **Required**. Token of the command.       |
+
 **Response** 
     
-*apps*
-
 ```json
-    {
-      "status": "success",
-      "result": {
-        "ok": true,
-        "output": "=====> My Apps\napi\nhello_world"
-      }
-    }
-```
-
-*randomcmd*
-
-```json
-    {
-      "status": "ok",
-      "result": {
-        "ok": false,
-        "output": "Invalid command"
-      }
-    }
-```    
-*ps:restart hello_world*
-
-```json
-    {
-      "status": "error",
-      "result": "result_not_ready"
-    }
+{
+  "id": 3,
+  "token": "6b0d56b05b5946b5d18c7f8a8891150d52f7e48a354cf8dcd96800b85340dcb3",
+  "command": "apps",
+  "created_at": "2017-03-15T15:14:47+00:00",
+  "ran_at": "2017-03-15T15:14:49+00:00",
+  "result_data": {
+    "ok": true,
+    "output": "=====> My Apps\napi\ndokku-api\nhello_world"
+  }
+}
 ```
