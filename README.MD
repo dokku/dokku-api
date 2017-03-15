@@ -18,6 +18,7 @@ You need to create an app for the API on the server;
     dokku redis:create dokku-api
     dokku redis:link dokku-api:dokku-api
     dokku config:set dokku-api API_KEY=YOURAPIKEY API_SECRET=YOURAPISECRET
+    dokku storage:mount dokku-api /var/run/dokku-daemon:/var/run/dokku-daemon
     
 Then you can deploy your app;
 
