@@ -10,7 +10,6 @@ module DokkuDaemonAPI
 
     before do
       content_type :json
-      authenticate!
     end
 
     get '/commands' do
@@ -19,13 +18,19 @@ module DokkuDaemonAPI
 
     post '/commands' do
       command = Command.create(command: params[:cmd])
+      run_sync = params[:sync] == "true"
 
       if command.valid?
-        CommandRunner.perform_async(command.id)
-        command.to_json(exclude: :result, methods: [:result_data])
+        if run_sync
+          @result = CommandRunner.new.perform(command.id)
+          return @result.to_json(exclude: :result, methods: [:result_data])
+        else
+          CommandRunner.perform_async(command.id)
+          return command.to_json(exclude: :result, methods: [:result_data])
+        end
       else
         status 422
-        {status: :error, messages: command.errors.collect{|field,msg| "#{field} #{msg}"}}.to_json
+        return {status: :error, messages: command.errors.collect{|field,msg| "#{field} #{msg}"}}.to_json
       end
     end
 

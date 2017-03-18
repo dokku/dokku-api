@@ -36,5 +36,6 @@ class CommandRunner
       @command.update!(result: result, ran_at: DateTime.now)
       socket.close if defined? socket
     end
+    return @command
   end
 end
