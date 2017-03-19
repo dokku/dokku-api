@@ -3,6 +3,7 @@ require "bundler/setup"
 require "sinatra"
 require File.join(File.dirname(__FILE__), "config", "environment")
 
+
 module DokkuDaemonAPI
   class App < Sinatra::Base
     set :logger, Logger.new(STDOUT)
@@ -17,8 +18,9 @@ module DokkuDaemonAPI
     end
 
     post '/commands' do
-      command = Command.create(command: params[:cmd])
+      command = Command.create(command: params[:cmd], callback_url: params[:callback_url])
       run_sync = params[:sync] == "true"
+      callback = params[:callback] == "true"
 
       if command.valid?
         if run_sync

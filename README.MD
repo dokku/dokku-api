@@ -23,7 +23,7 @@ You need to create an app for the API on the server;
     
 Then you can deploy your app;
 
-    git clone https://github.com/beydogan/dokku-api
+    git clone https://github.com/dokku/dokku-api
     cd dokku-api
     git remote add dokku dokku@yourserver.ip:dokku-api
     git push dokku
@@ -35,7 +35,7 @@ Dokku API uses `Api-Key` and `Api-Secret` request headers for authentication. **
 
 You can generate a key pair with `rake keys:generate` command.
 
-    dokku run dokku-api keys:generate
+    dokku run dokku-api rake keys:generate
     >   New API key was generated
     >   API KEY: b33e456232bba2edb8d5cde370bc2f35 | API SECRET: a46287c12099fdd55f0c9513be0cdb32
     
@@ -97,7 +97,8 @@ Adds the given command to the queue and returns the `Command` as json.
 | Name    | Type   | Description                                  |
 | ------- | ------ | -------------------------------------------- |
 | cmd    | string | **Required**. Command to run.       |
-| synced    | string | **Optional**. **true** or **false** Default false. Runs the command synchronously.    |
+| sync    | string | **Optional**. **true** or **false** Default false. Runs the command synchronously.    |
+| callback_url    | string | **Optional**. The URL to hit after command has been ran   |
 
 
 **Example**
@@ -149,3 +150,23 @@ Returns the `Command`.
   }
 }
 ```
+
+
+## Callbacks
+
+If you pass `callback_url` parameter when creating a command, dokku-api will send a POST request to the specified URL with the following JSON schema
+ 
+```json
+{
+  "id": 3,
+  "token": "6b0d56b05b5946b5d18c7f8a8891150d52f7e48a354cf8dcd96800b85340dcb3",
+  "command": "apps",
+  "created_at": "2017-03-15T15:14:47+00:00",
+  "ran_at": "2017-03-15T15:14:49+00:00",
+  "result_data": {
+    "ok": true,
+    "output": "=====> My Apps\napi\ndokku-api\nhello_world"
+  }
+}
+```
+

@@ -1,7 +1,7 @@
 require 'sidekiq'
 require File.join(File.dirname(__FILE__), "..", "config", "environment")
-DEFAULT_SOCKET_PATH="/var/run/dokku-daemon/dokku-daemon.sock"
-DEFAULT_TIMEOUT=60
+DEFAULT_SOCKET_PATH ="/var/run/dokku-daemon/dokku-daemon.sock"
+DEFAULT_TIMEOUT = ENV["COMMAND_TIMEOUT"].nil? ? 60 : ENV["COMMAND_TIMEOUT"].to_i
 Sidekiq.configure_server do |config|
   config.redis = { url: ENV["REDIS_URL"] }
 end
@@ -22,10 +22,11 @@ class CommandRunner
         result = socket.gets("\n")
         logger.info "[CommandRunner] Result: #{result}"
         @command.update!(result: result, ran_at: DateTime.now)
+        CallbackWorker.perform_async(@command.id) unless @command.callback_url.nil?
         socket.close
       end
     rescue Timeout::Error
-      logger.info "[CommandRunner] Command Timed Out"
+      logger.info "[CommandRunner] Command Timed Out after #{DEFAULT_TIMEOUT}"
       result = {ok: false, output: "command_timed_out"}.to_json.to_s
       @command.update!(result: result, ran_at: DateTime.now)
       socket.close if defined? socket
