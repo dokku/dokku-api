@@ -97,7 +97,7 @@ Adds the given command to the queue and returns the `Command` as json.
 | Name    | Type   | Description                                  |
 | ------- | ------ | -------------------------------------------- |
 | cmd    | string | **Required**. Command to run.       |
-| synced    | string | **Optional**. **true** or **false** Default false. Runs the command synchronously.    |
+| sync    | string | **Optional**. **true** or **false** Default false. Runs the command synchronously.    |
 
 
 **Example**
