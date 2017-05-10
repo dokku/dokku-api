@@ -98,6 +98,7 @@ Adds the given command to the queue and returns the `Command` as json.
 | ------- | ------ | -------------------------------------------- |
 | cmd    | string | **Required**. Command to run.       |
 | sync    | string | **Optional**. **true** or **false** Default false. Runs the command synchronously.    |
+| callback_url    | string | **Optional**. The URL to hit after command has been ran   |
 
 
 **Example**
@@ -149,3 +150,23 @@ Returns the `Command`.
   }
 }
 ```
+
+
+## Callbacks
+
+If you pass `callback_url` parameter when creating a command, dokku-api will send a POST request to the specified URL with the following JSON schema
+ 
+```json
+{
+  "id": 3,
+  "token": "6b0d56b05b5946b5d18c7f8a8891150d52f7e48a354cf8dcd96800b85340dcb3",
+  "command": "apps",
+  "created_at": "2017-03-15T15:14:47+00:00",
+  "ran_at": "2017-03-15T15:14:49+00:00",
+  "result_data": {
+    "ok": true,
+    "output": "=====> My Apps\napi\ndokku-api\nhello_world"
+  }
+}
+```
+

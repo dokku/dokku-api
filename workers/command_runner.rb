@@ -22,6 +22,7 @@ class CommandRunner
         result = socket.gets("\n")
         logger.info "[CommandRunner] Result: #{result}"
         @command.update!(result: result, ran_at: DateTime.now)
+        CallbackWorker.perform_async(@command.id) unless @command.callback_url.nil?
         socket.close
       end
     rescue Timeout::Error
