@@ -23,7 +23,7 @@ You need to create an app for the API on the server;
     
 Then you can deploy your app;
 
-    git clone https://github.com/beydogan/dokku-api
+    git clone https://github.com/dokku/dokku-api
     cd dokku-api
     git remote add dokku dokku@yourserver.ip:dokku-api
     git push dokku
@@ -35,7 +35,7 @@ Dokku API uses `Api-Key` and `Api-Secret` request headers for authentication. **
 
 You can generate a key pair with `rake keys:generate` command.
 
-    dokku run dokku-api keys:generate
+    dokku run dokku-api rake keys:generate
     >   New API key was generated
     >   API KEY: b33e456232bba2edb8d5cde370bc2f35 | API SECRET: a46287c12099fdd55f0c9513be0cdb32
     
