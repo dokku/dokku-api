@@ -14,6 +14,7 @@ ENV HOME /root
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 COPY Gemfile* $APP_HOME/
+RUN gem install bundler
 RUN bundle install
 
 # Upload source
