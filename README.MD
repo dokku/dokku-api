@@ -122,9 +122,9 @@ Adds the given command to the queue and returns the `Command` as json.
 
 ## Retrieve a command
 
-`GET /command/:token`
+`GET /commands/:token`
 
-Returns the `Command`.
+Returns the `Command` with given token
 
 **Example**
 
