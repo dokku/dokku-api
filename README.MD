@@ -2,7 +2,7 @@
 
 HTTP API to interact with  [Dokku Daemon](https://github.com/dokku/dokku-daemon) over HTTP.
 
-## Requirements 
+## Requirements
 
 A server running Dokku with Dokku Daemon and Redis, Postgres plugin installed.
 
@@ -17,10 +17,11 @@ You need to create an app for the API on the server;
     dokku apps:create dokku-api
     dokku redis:create dokku-api
     dokku postgres:create dokku-api
-    dokku redis:link dokku-api:dokku-api
-    dokku postgres:link dokku-api:dokku-api
+    dokku redis:link dokku-api dokku-api
+    dokku postgres:link dokku-api dokku-api
     dokku storage:mount dokku-api /var/run/dokku-daemon:/var/run/dokku-daemon
-    
+    dokku ps:scale dokku-api worker=1 
+
 Then you can deploy your app;
 
     git clone https://github.com/dokku/dokku-api
@@ -38,7 +39,7 @@ You can generate a key pair with `rake keys:generate` command.
     dokku run dokku-api rake keys:generate
     >   New API key was generated
     >   API KEY: b33e456232bba2edb8d5cde370bc2f35 | API SECRET: a46287c12099fdd55f0c9513be0cdb32
-    
+
 
 ### Headers
 
@@ -52,7 +53,7 @@ You can generate a key pair with `rake keys:generate` command.
 ### Retrive all commands
 
 `GET /commands`
-    
+
 **Example**
 
     curl -i -H "Api-Key: YOURKEY" -H "Api-Secret: YOURSECRET" http://yourserver.ip:42143/commands
@@ -104,8 +105,8 @@ Adds the given command to the queue and returns the `Command` as json.
 **Example**
 
     curl -i -X POST -d "cmd=apps" -H "Api-Key: YOURKEY" -H "Api-Secret: YOURSECRET" http://yourserver.ip:42143/commands
-    
-**Response** 
+
+**Response**
 
 ```json
   {
@@ -119,11 +120,11 @@ Adds the given command to the queue and returns the `Command` as json.
 ```
 
 
-## Retrieve a command 
+## Retrieve a command
 
 `GET /command/:token`
 
-Returns the `Command`. 
+Returns the `Command`.
 
 **Example**
 
@@ -135,8 +136,8 @@ Returns the `Command`.
 | ------- | ------ | -------------------------------------------- |
 | token    | string | **Required**. Token of the command.       |
 
-**Response** 
-    
+**Response**
+
 ```json
 {
   "id": 3,
@@ -155,7 +156,7 @@ Returns the `Command`.
 ## Callbacks
 
 If you pass `callback_url` parameter when creating a command, dokku-api will send a POST request to the specified URL with the following JSON schema
- 
+
 ```json
 {
   "id": 3,
@@ -169,4 +170,3 @@ If you pass `callback_url` parameter when creating a command, dokku-api will sen
   }
 }
 ```
-
