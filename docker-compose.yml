@@ -1,0 +1,15 @@
+version: '3'
+services:
+  db:
+    image: postgres
+  web:
+    build: .
+    command: puma -C config/puma.rb
+    volumes:
+      - .:/app
+    ports:
+      - "3001:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres@db:5432

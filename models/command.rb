@@ -2,7 +2,7 @@ class Command
   include DataMapper::Resource
   property :id, Serial
   property :token, String, length: 64
-  property :command, String
+  property :command, String, length: 255
   property :result, Text
   property :created_at, DateTime
   property :ran_at, DateTime

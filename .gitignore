@@ -4,3 +4,4 @@ sidekiq.pid
 .ruby-version
 .byebug_history
 .idea/
+Dockerfile

@@ -11,6 +11,7 @@ module DokkuDaemonAPI
 
     before do
       content_type :json
+      authenticate!
     end
 
     get '/commands' do
