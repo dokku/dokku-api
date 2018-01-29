@@ -170,3 +170,8 @@ If you pass `callback_url` parameter when creating a command, dokku-api will sen
   }
 }
 ```
+
+
+## Sidekiq Web
+
+`dokku-api` uses Sidekiq for background processing. It includes [Sidekiq Web UI](https://github.com/mperham/sidekiq/wiki/Monitoring). To access it you need to set two ENV variables `SIDEKIQ_USER` and `SIDEKIQ_PASSWORD`, then you can access it at `/sidekiq`.
