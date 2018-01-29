@@ -21,6 +21,6 @@ class Command
   end
 
   def result_data
-    self.result ? JSON.parse(self.result) : nil
+    self.result ? JSON.parse(self.result.gsub("\e[1G", "")) : nil
   end
 end
