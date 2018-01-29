@@ -2,14 +2,35 @@ version: '3'
 services:
   db:
     image: postgres
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+  sidekiq:
+    depends_on:
+      - db
+      - redis
+    build: .
+    command: sidekiq -r ./workers/command_runner.rb -C ./config/sidekiq.yml
+    volumes:
+      - .:/app
+      - /var/run/dokku-daemon:/var/run/dokku-daemon
+    environment:
+      DATABASE_URL: postgres://postgres@db:5432
+      REDIS_URL: redis://redis
   web:
     build: .
     command: puma -C config/puma.rb
     volumes:
       - .:/app
+      - /var/run/dokku-daemon:/var/run/dokku-daemon
     ports:
-      - "3001:3000"
+      - "3000:3000"
     depends_on:
       - db
+      - redis
     environment:
       DATABASE_URL: postgres://postgres@db:5432
+      REDIS_URL: redis://redis
+    stdin_open: true
+    tty: true
