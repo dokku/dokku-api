@@ -6,7 +6,7 @@ class Command
   property :result, Text
   property :created_at, DateTime
   property :ran_at, DateTime
-  property :callback_url, String
+  property :callback_url, String, length: 2048
 
   validates_uniqueness_of :token
   validates_presence_of :command
