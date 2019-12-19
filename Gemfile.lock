@@ -72,7 +72,7 @@ GEM
     pg (0.20.0)
     public_suffix (2.0.5)
     puma (3.9.1)
-    rack (1.6.5)
+    rack (1.6.12)
     rack-protection (1.5.3)
       rack
     rb-fsevent (0.9.8)
