@@ -1,8 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.0)
-      public_suffix (~> 2.0, >= 2.0.2)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     awesome_print (1.7.0)
     bcrypt (3.1.11)
     bcrypt-ruby (3.1.5)
@@ -70,7 +70,7 @@ GEM
       ruby_dep (~> 1.2)
     multi_json (1.12.1)
     pg (0.20.0)
-    public_suffix (2.0.5)
+    public_suffix (4.0.6)
     puma (3.12.4)
     rack (1.6.12)
     rack-protection (1.5.5)
