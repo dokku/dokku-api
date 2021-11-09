@@ -1,4 +1,6 @@
-# Dokku API
+# Dokku API (Abandoned)
+
+> This project is not maintained and considered abandoned. Please consider using [Dokku Pro](https://dokku.com/docs/enterprise/pro/) instead.
 
 HTTP API to interact with  [Dokku Daemon](https://github.com/dokku/dokku-daemon) over HTTP.
 
